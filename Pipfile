@@ -8,6 +8,8 @@ fastapi = {extras = ["all"], version = "*"}
 pymongo = "*"
 motor = "*"
 pydantic = "*"
+uvicorn = "*"
+django = "*"
 
 [dev-packages]
 

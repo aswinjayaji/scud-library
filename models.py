@@ -1,8 +1,25 @@
 from typing import Optional
-from pydantic import BaseModel ,EmailStr,Field
+from pydantic import BaseModel ,EmailStr,Field,validator
 from datetime import datetime
+from bson.objectid import ObjectId
+
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
 
 class BookModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     title:str = Field(...)
     subtitle:str =Field(...)
     author:str =Field(...) 
@@ -11,6 +28,9 @@ class BookModel(BaseModel):
     borrowerid:str =None
     # publication_date:datetime =Field(...)
     class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
         schema_extra = {
             "example":{
                 "title":"The Da Vinci Code",
@@ -18,11 +38,12 @@ class BookModel(BaseModel):
                 "author":"Dan Brown",
                 "isbn":9780385504201,
                 "price":500,
-                "borrowedid":None
+                "borrowerid":None
             }
         }
 
 class UpdateBookModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     title:str =Optional[str] 
     subtitle:str =Optional[str] 
     author:str =Optional[str]  
@@ -30,14 +51,17 @@ class UpdateBookModel(BaseModel):
     price:int =Optional[int] 
     borrowerid:str =Optional[str] 
     class Config:
-            schema_extra = {
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
             "example":{
                 "title":"The Da Vinci Code",
                 "subtitle":"vol 1",
                 "author":"Dan Brown",
                 "isbn":9780385504201,
                 "price":450,
-                "borrowedid":None
+                "borrowerid":None
             }
         }
 def ResponseModel(data,message):
@@ -49,3 +73,18 @@ def ResponseModel(data,message):
     
 def ErrorResponseModel(error, code, message):
     return {"error": error, "code": code, "message": message}
+
+class User(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    name:str=Field(...)
+    admin:bool =Field(default_factory=False)
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example":{
+               "name":"John Doe",
+               "admin":False
+            }
+        }

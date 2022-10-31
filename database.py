@@ -12,11 +12,16 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URL)
 #When the first I/O operation is made, both the database
 #and collection will be created if they don't already exist.
 db = client.books
-book_collection = db.get_collection("book_collection")
+book_collection = db.get_collection("book_collections")
+db = client.users
+user_details = db["user_details"]
+
+
+
 
 #helpers
 
-def book_helper(book) -> dict:
+def book_helper(book:dict) -> dict:
     return {
         "id":str(book["_id"]),
         "title":book["title"],
@@ -24,10 +29,24 @@ def book_helper(book) -> dict:
         "author":book["author"],
         "isbn":book["isbn"],
         "price":book["price"],
-        "borrowedid":book["borrowedid"]         
+        "borrowerid":book["borrowerid"]         
+    }
+def user_helper(user:dict) -> dict:
+    return {
+        "id":str(user["_id"]),
+        "name":user["name"],
+        "admin":bool(user["admin"])
     }
     
-    
+#Retrieve all books present in the database  
+async def retrieve_user():
+    users=[]
+    async for user in user_details.find():
+        users.append(user_helper(user))
+    return users
+
+
+
 
 # Retrieve all books present in the database
 async def retrieve_books():
