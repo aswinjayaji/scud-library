@@ -71,18 +71,21 @@ async def retrieve_book(name: str) -> dict:
 
 
 # Update a book with a matching ID
-async def update_book(id: str, data: dict):
+async def update_book(name: str, data: dict):
     # Return false if an empty request body is sent.
     if len(data) < 1:
         return False
-    book = await book_collection.find_one({"_id": ObjectId(id)})
+    book = await book_collection.find_one({"title": name})
+    # print("hello",id,book)
     if book:
         updated_book = await book_collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": data}
+            {"_id": book["_id"]}, {"$set": data}
         )
+        # print(updated_book)
         if updated_book:
             return True
         return False
+#borrow book 
 
 
 # Delete a book from the database

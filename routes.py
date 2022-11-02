@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
+from bson.objectid import ObjectId
 
 from database import (
     add_book,
@@ -59,17 +60,36 @@ async def get_book(name):
         return ResponseModel(book, "Student data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Student doesn't exist.")
 
-# @router.put("/book/{id}")
-# async def update_book_data(id: str, req: UpdateBookModel = Body(...)):
-#     req = {k: v for k, v in req.dict().items() if v is not None}
-#     updated_book = await update_book(id, req)
-#     if updated_book:
-#         return ResponseModel(
-#             "Book with ID: {} name update is successful".format(id),
-#             "Book name updated successfully",
-#         )
-#     return ErrorResponseModel(
-#         "An error occurred",
-#         404,
-#         "There was an error updating the student data.",
-#     )
+@router.put("/bookborrow/{name}")
+async def borrow_book_data(name: str, req: UpdateBookModel = Body(...)):
+    req = {k: v for k, v in req.dict().items() if v is not None}
+    print(await book_collection.find_one({"title": name}))
+    updated_book = await update_book(name, req)
+    # print(updated_book,req)
+    if updated_book:
+        user = await user_details.find_one({"_id":req["borrowerid"]})
+        return ResponseModel(
+            "Book with name: {} is borrowed by {} is successful".format(name,user["name"]),
+            "Book borrowed successfully",
+        )
+    return ErrorResponseModel(
+        "An error occurred",
+        404,
+        "There was an error updating the student data.",
+    )
+    
+@router.put("/bookreturn/{name}")
+async def borrow_book_data(name: str):
+    book = await book_collection.find_one({"title": name})
+    print(book)
+    # print(updated_book,req)
+    if book:
+        updated_book = await book_collection.update_one(
+            {"_id": book["_id"]}, {"$set": {'borrowerid':None}}
+        )
+        return ResponseModel(book, "returned successfully")
+    return ErrorResponseModel(
+        "An error occurred",
+        404,
+        "There was an error updating the student data.",
+    )

@@ -43,15 +43,13 @@ class BookModel(BaseModel):
         }
 
 class UpdateBookModel(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    title:str =Optional[str] 
-    subtitle:str =Optional[str] 
-    author:str =Optional[str]  
-    isbn:int =Optional[int] 
-    price:int =Optional[int] 
-    borrowerid:str =Optional[str] 
+    title:Optional[str] 
+    subtitle:Optional[str] 
+    author:Optional[str]  
+    isbn:Optional[int] 
+    price:Optional[int] 
+    borrowerid:Optional[str] 
     class Config:
-        allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
         schema_extra = {
