@@ -89,8 +89,9 @@ async def update_book(name: str, data: dict):
 
 
 # Delete a book from the database
-async def delete_book(id: str):
-    book = await book_collection.find_one({"_id": ObjectId(id)})
+async def delete_book(name:str):
+    book = await book_collection.find_one({"title":name})
+    print(book)
     if book:
-        await book_collection.delete_one({"_id": ObjectId(id)})
+        await book_collection.delete_one({"_id": book["_id"]})
         return True
