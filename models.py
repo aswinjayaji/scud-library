@@ -76,6 +76,7 @@ def ErrorResponseModel(error, code, message):
 
 class User(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    username:str=Field(...)
     name:str=Field(...)
     admin:bool =Field(default_factory=False)
     class Config:
@@ -84,6 +85,7 @@ class User(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example":{
+               "username":"johndoe",
                "name":"John Doe",
                "admin":False
             }

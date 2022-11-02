@@ -64,8 +64,8 @@ async def add_book(book_data: dict) -> dict:
 
 
 # Retrieve a book with a matching ID
-async def retrieve_book(id: str) -> dict:
-    book = await book_collection.find_one({"_id": ObjectId(id)})
+async def retrieve_book(name: str) -> dict:
+    book = await book_collection.find_one({"title": name})
     if book:
         return book_helper(book)
 
