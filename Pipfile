@@ -10,6 +10,7 @@ motor = "*"
 pydantic = "*"
 uvicorn = "*"
 django = "*"
+gunicorn = "*"
 
 [dev-packages]
 

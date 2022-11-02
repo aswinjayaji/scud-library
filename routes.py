@@ -60,34 +60,37 @@ async def get_book(name):
         return ResponseModel(book, "Student data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Student doesn't exist.")
 
-@router.put("/bookborrow/{name}")
-async def borrow_book_data(name: str, req: UpdateBookModel = Body(...)):
-    req = {k: v for k, v in req.dict().items() if v is not None}
-    print(await book_collection.find_one({"title": name}))
-    updated_book = await update_book(name, req)
+    
+@router.put("/bookreturn/{name}&{user}")
+async def borrow_book_data(name: str,user:str):
+    book = await book_collection.find_one({"title": name})
+    user = await user_details.find_one({"name": user})
+    print(book)
     # print(updated_book,req)
-    if updated_book:
-        user = await user_details.find_one({"_id":req["borrowerid"]})
-        return ResponseModel(
-            "Book with name: {} is borrowed by {} is successful".format(name,user["name"]),
-            "Book borrowed successfully",
+    if book and book["borrowerid"] == user["_id"]:
+        updated_book = await book_collection.update_one(
+            {"_id": book["_id"]}, {"$set": {'borrowerid':None}}
         )
+        print(updated_book)
+        book=await book_collection.find_one({"_id": book["_id"]})
+        return ResponseModel(book, "returned successfully")
     return ErrorResponseModel(
         "An error occurred",
         404,
         "There was an error updating the student data.",
     )
-    
-@router.put("/bookreturn/{name}")
-async def borrow_book_data(name: str):
+@router.put("/bookborrow/{name}&{user}")
+async def borrow_book_data(name: str,user:str):
     book = await book_collection.find_one({"title": name})
-    print(book)
+    user = await user_details.find_one({"name": user})
+    # print(book)
     # print(updated_book,req)
     if book:
         updated_book = await book_collection.update_one(
-            {"_id": book["_id"]}, {"$set": {'borrowerid':None}}
+            {"_id": book["_id"]}, {"$set": {'borrowerid':user["_id"]}}
         )
-        return ResponseModel(book, "returned successfully")
+        book = await book_collection.find_one({"_id": book["_id"]})
+        return ResponseModel(book, "borrowerid successfully")
     return ErrorResponseModel(
         "An error occurred",
         404,

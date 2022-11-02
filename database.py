@@ -33,7 +33,7 @@ def book_helper(book:dict) -> dict:
     }
 def user_helper(user:dict) -> dict:
     return {
-        "id":str(user["_id"]),
+        # "id":str(user["_id"]),
         "name":user["name"],
         "admin":bool(user["admin"])
     }
