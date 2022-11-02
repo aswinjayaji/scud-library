@@ -53,15 +53,15 @@ async def get_books():
         return ResponseModel(book, "Books ")
     return ResponseModel(book,"Empty List Returned")
 
-@router.get("/searchbook/{name}", response_description="Student data retrieved")
+@router.get("/searchbook/{name}", response_description="Book data retrieved")
 async def get_book(name):
     book = await retrieve_book(name)
     if book:
-        return ResponseModel(book, "Student data retrieved successfully")
-    return ErrorResponseModel("An error occurred.", 404, "Student doesn't exist.")
+        return ResponseModel(book, "Book data retrieved successfully")
+    return ErrorResponseModel("An error occurred.", 404, "Book doesn't exist.")
 
 @router.put("/bookupdate/{name}&{id}")
-async def update_student_data(name:str,id: str, req: UpdateBookModel = Body(...)):
+async def update_book_data(name:str,id: str, req: UpdateBookModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
     user = await user_details.find_one({"_id":id})
     if user and user["admin"]:
@@ -97,7 +97,7 @@ async def borrow_book_data(name: str,user:str):
     return ErrorResponseModel(
         "An error occurred",
         404,
-        "There was an error updating the student data.",
+        "There was an error updating the book data.",
     )
 @router.put("/bookborrow/{name}&{user}")
 async def borrow_book_data(name: str,user:str):
@@ -114,10 +114,10 @@ async def borrow_book_data(name: str,user:str):
     return ErrorResponseModel(
         "An error occurred",
         404,
-        "There was an error updating the student data.",
+        "There was an error updating the book data.",
     )
 
-@router.delete("/{name}&{id}", response_description="Student data deleted from the database")
+@router.delete("/{name}&{id}", response_description="Book data deleted from the database")
 async def delete_book_data(name: str ,id:str):
     user = await user_details.find_one({"_id":id})
     
