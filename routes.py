@@ -22,14 +22,14 @@ from models import (
 
 router = APIRouter()
 
-@router.post("/user", response_description="user added into the database")
+@router.post("/adduser", response_description="user added into the database")
 async def add_users(user_data:User=Body(...)):
        user = jsonable_encoder(user_data)
        new_user = await user_details.insert_one(user)
        created_user = await user_details.find_one({"_id":new_user.inserted_id})
        return ResponseModel(created_user , "user created")
    
-@router.get("/users",response_description="Users retrieved")
+@router.get("/getusers",response_description="Users retrieved")
 async def get_user():
     user = await retrieve_user()
     if user:
@@ -70,7 +70,7 @@ async def update_book_data(name:str,id: str, req: UpdateBookModel = Body(...)):
         )
     
 
-@router.delete("/{name}&{id}", response_description="Book data deleted from the database")
+@router.delete("/delete/{name}&{id}", response_description="Book data deleted from the database")
 async def delete_book_data(name: str ,id:str):
     user = await user_details.find_one({"_id":id})
     
