@@ -45,21 +45,8 @@ async def add_books(id:str,book_data:BookModel=Body(...)):
         created_book = await book_collection.find_one({"_id":new_book.inserted_id})
         return ResponseModel(created_book , "book created")
        return ErrorResponseModel("not allowed","404","user is not admin")
-
-@router.get("/books",response_description="Books that are in the database")
-async def get_books():
-    book = await retrieve_books()
-    if book:
-        return ResponseModel(book, "Books ")
-    return ResponseModel(book,"Empty List Returned")
-
-@router.get("/searchbook/{name}", response_description="Book data retrieved")
-async def get_book(name):
-    book = await retrieve_book(name)
-    if book:
-        return ResponseModel(book, "Book data retrieved successfully")
-    return ErrorResponseModel("An error occurred.", 404, "Book doesn't exist.")
-
+   
+   
 @router.put("/bookupdate/{name}&{id}")
 async def update_book_data(name:str,id: str, req: UpdateBookModel = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
@@ -81,6 +68,40 @@ async def update_book_data(name:str,id: str, req: UpdateBookModel = Body(...)):
             404,
             "user doesnot have permission to delete data",
         )
+    
+
+@router.delete("/{name}&{id}", response_description="Book data deleted from the database")
+async def delete_book_data(name: str ,id:str):
+    user = await user_details.find_one({"_id":id})
+    
+    if user and user["admin"]:
+      deleted_book= await delete_book(name)
+      if deleted_book :
+        return ResponseModel(
+            "Book with name: {} removed by {}".format(name,user["name"]), "Book deleted successfully"
+        )
+        return ErrorResponseModel(
+        "An error occurred", 404, "Book with id {0} doesn't exist".format(id)
+        )
+    return ErrorResponseModel(
+        "An error occurred", 404, "User doesn't have permission to delete"
+    )
+    
+@router.get("/books",response_description="Books that are in the database")
+async def get_books():
+    book = await retrieve_books()
+    if book:
+        return ResponseModel(book, "Books ")
+    return ResponseModel(book,"Empty List Returned")
+
+@router.get("/searchbook/{name}", response_description="Book data retrieved")
+async def get_book(name):
+    book = await retrieve_book(name)
+    if book:
+        return ResponseModel(book, "Book data retrieved successfully")
+    return ErrorResponseModel("An error occurred.", 404, "Book doesn't exist.")
+
+
 @router.put("/bookreturn/{name}&{user}")
 async def borrow_book_data(name: str,user:str):
     book = await book_collection.find_one({"title": name})
@@ -115,21 +136,4 @@ async def borrow_book_data(name: str,user:str):
         "An error occurred",
         404,
         "There was an error updating the book data.",
-    )
-
-@router.delete("/{name}&{id}", response_description="Book data deleted from the database")
-async def delete_book_data(name: str ,id:str):
-    user = await user_details.find_one({"_id":id})
-    
-    if user and user["admin"]:
-      deleted_book= await delete_book(name)
-      if deleted_book :
-        return ResponseModel(
-            "Book with name: {} removed by {}".format(name,user["name"]), "Book deleted successfully"
-        )
-        return ErrorResponseModel(
-        "An error occurred", 404, "Book with id {0} doesn't exist".format(id)
-        )
-    return ErrorResponseModel(
-        "An error occurred", 404, "User doesn't have permission to delete"
     )

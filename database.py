@@ -31,6 +31,8 @@ def book_helper(book:dict) -> dict:
         "price":book["price"],
         "borrowerid":book["borrowerid"]         
     }
+    
+# format
 def user_helper(user:dict) -> dict:
     return {
         # "id":str(user["_id"]),
@@ -38,7 +40,7 @@ def user_helper(user:dict) -> dict:
         "admin":bool(user["admin"])
     }
     
-#Retrieve all books present in the database  
+# Retrieve all books present in the database  
 async def retrieve_user():
     users=[]
     async for user in user_details.find():
