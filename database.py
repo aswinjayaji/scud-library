@@ -12,9 +12,9 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URL)
 #When the first I/O operation is made, both the database
 #and collection will be created if they don't already exist.
 db = client.books
-book_collection = db.get_collection("book_collections")
+book_collection = db.get_collection("book_collections2")
 db = client.users
-user_details = db["user_details"]
+user_details = db["user_details2"]
 
 
 

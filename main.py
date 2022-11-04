@@ -7,4 +7,4 @@ app.include_router(BookRouter, tags=["lib"], prefix="/lib")
 
 @app.get('/')
 async def Home():
-    return RedirectResponse("https://scud-library.herokuapp.com/docs")
+    return RedirectResponse("http://127.0.0.1:8000/docs")
