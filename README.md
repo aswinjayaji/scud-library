@@ -26,7 +26,7 @@ The process is basically the usual set up for any Python app: `environment` set 
 > 👉 **Step 1** - `Download the code` from the GH repository (using `GIT`) 
 
 ```bash
-$ git clone https://github.com/app-generator/ecommerce-fastapi-stripe.git
+$ git clone https://github.com/aswinjayaji/scud-library.git
 $ cd scud-library
 ```
 
